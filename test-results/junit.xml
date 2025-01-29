@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="jest tests" tests="10" failures="5" errors="0" time="1.442">
+  <testsuite name="Email Validator Tests" errors="0" failures="0" skipped="0" timestamp="2025-01-29T02:48:06" time="0.354" tests="4">
+    <testcase classname="tests/aws/email-validator.test.js" name="should allow valid ocupop.com email" time="0.005">
+    </testcase>
+    <testcase classname="tests/aws/email-validator.test.js" name="should reject non-ocupop email" time="0.006">
+    </testcase>
+    <testcase classname="tests/aws/email-validator.test.js" name="should handle empty email" time="0.002">
+    </testcase>
+    <testcase classname="tests/aws/email-validator.test.js" name="should handle malformed email" time="0.001">
+    </testcase>
+  </testsuite>
+  <testsuite name="GCP Rate Limiter Tests" errors="0" failures="2" skipped="0" timestamp="2025-01-29T02:48:06" time="1.146" tests="3">
+    <testcase classname="tests/gcp/rate-limiter.test.js" name="should allow request within limits" time="0.222">
+    </testcase>
+    <testcase classname="tests/gcp/rate-limiter.test.js" name="should block request when rate limit exceeded" time="0.016">
+      <failure>Error: expect(jest.fn()).toHaveBeenCalledWith(...expected)
+
+Expected: 429
+Received: 500
+
+Number of calls: 1
+    at Object.toHaveBeenCalledWith (/Users/tombeck/Development/tools/automation-builder/tests/gcp/rate-limiter.test.js:89:28)
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)</failure>
+    </testcase>
+    <testcase classname="tests/gcp/rate-limiter.test.js" name="should respect existing lockout" time="0.002">
+      <failure>Error: expect(jest.fn()).toHaveBeenCalledWith(...expected)
+
+Expected: 429
+Received: 500
+
+Number of calls: 1
+    at Object.toHaveBeenCalledWith (/Users/tombeck/Development/tools/automation-builder/tests/gcp/rate-limiter.test.js:125:28)
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)</failure>
+    </testcase>
+  </testsuite>
+  <testsuite name="Rate Limiter Tests" errors="0" failures="3" skipped="0" timestamp="2025-01-29T02:48:06" time="1.193" tests="3">
+    <testcase classname="tests/aws/rate-limiter.test.js" name="should allow first attempt" time="0.01">
+      <failure>ConfigError: Missing region in config
+    at Request.VALIDATE_REGION (/Users/tombeck/Development/tools/automation-builder/node_modules/aws-sdk/lib/event_listeners.js:128:47)
+    at Request.callListeners (/Users/tombeck/Development/tools/automation-builder/node_modules/aws-sdk/lib/sequential_executor.js:106:20)
+    at callNextListener (/Users/tombeck/Development/tools/automation-builder/node_modules/aws-sdk/lib/sequential_executor.js:96:12)
+    at /Users/tombeck/Development/tools/automation-builder/node_modules/aws-sdk/lib/event_listeners.js:120:11
+    at finish (/Users/tombeck/Development/tools/automation-builder/node_modules/aws-sdk/lib/config.js:396:7)
+    at /Users/tombeck/Development/tools/automation-builder/node_modules/aws-sdk/lib/config.js:438:9
+    at Object.&lt;anonymous&gt; (/Users/tombeck/Development/tools/automation-builder/node_modules/aws-sdk/lib/credentials/credential_provider_chain.js:111:13)
+    at Object.arrayEach (/Users/tombeck/Development/tools/automation-builder/node_modules/aws-sdk/lib/util.js:529:32)
+    at resolveNext (/Users/tombeck/Development/tools/automation-builder/node_modules/aws-sdk/lib/credentials/credential_provider_chain.js:110:20)
+    at /Users/tombeck/Development/tools/automation-builder/node_modules/aws-sdk/lib/credentials/credential_provider_chain.js:126:13
+    at EnvironmentCredentials.get (/Users/tombeck/Development/tools/automation-builder/node_modules/aws-sdk/lib/credentials.js:127:7)
+    at resolveNext (/Users/tombeck/Development/tools/automation-builder/node_modules/aws-sdk/lib/credentials/credential_provider_chain.js:125:17)
+    at CredentialProviderChain.resolve (/Users/tombeck/Development/tools/automation-builder/node_modules/aws-sdk/lib/credentials/credential_provider_chain.js:133:7)
+    at Config.getCredentials (/Users/tombeck/Development/tools/automation-builder/node_modules/aws-sdk/lib/config.js:433:31)
+    at Request.VALIDATE_CREDENTIALS (/Users/tombeck/Development/tools/automation-builder/node_modules/aws-sdk/lib/event_listeners.js:111:28)
+    at Request.callListeners (/Users/tombeck/Development/tools/automation-builder/node_modules/aws-sdk/lib/sequential_executor.js:102:18)
+    at Request.emit (/Users/tombeck/Development/tools/automation-builder/node_modules/aws-sdk/lib/sequential_executor.js:78:10)
+    at Request.emit (/Users/tombeck/Development/tools/automation-builder/node_modules/aws-sdk/lib/request.js:686:14)
+    at Request.transition (/Users/tombeck/Development/tools/automation-builder/node_modules/aws-sdk/lib/request.js:22:10)
+    at AcceptorStateMachine.runTo (/Users/tombeck/Development/tools/automation-builder/node_modules/aws-sdk/lib/state_machine.js:14:12)
+    at Request.runTo (/Users/tombeck/Development/tools/automation-builder/node_modules/aws-sdk/lib/request.js:406:15)
+    at /Users/tombeck/Development/tools/automation-builder/node_modules/aws-sdk/lib/request.js:795:12
+    at new Promise (&lt;anonymous&gt;)
+    at Request.promise (/Users/tombeck/Development/tools/automation-builder/node_modules/aws-sdk/lib/request.js:781:12)
+    at promise (/Users/tombeck/Development/tools/automation-builder/terraform/aws/lambda/rate-limiter/index.js:55:49)
+    at checkRateLimit (/Users/tombeck/Development/tools/automation-builder/terraform/aws/lambda/rate-limiter/index.js:18:9)
+    at Object.handler (/Users/tombeck/Development/tools/automation-builder/tests/aws/rate-limiter.test.js:52:30)
+    at Promise.then.completed (/Users/tombeck/Development/tools/automation-builder/node_modules/jest-circus/build/utils.js:298:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (/Users/tombeck/Development/tools/automation-builder/node_modules/jest-circus/build/utils.js:231:10)
+    at _callCircusTest (/Users/tombeck/Development/tools/automation-builder/node_modules/jest-circus/build/run.js:316:40)
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at _runTest (/Users/tombeck/Development/tools/automation-builder/node_modules/jest-circus/build/run.js:252:3)
+    at _runTestsForDescribeBlock (/Users/tombeck/Development/tools/automation-builder/node_modules/jest-circus/build/run.js:126:9)
+    at _runTestsForDescribeBlock (/Users/tombeck/Development/tools/automation-builder/node_modules/jest-circus/build/run.js:121:9)
+    at run (/Users/tombeck/Development/tools/automation-builder/node_modules/jest-circus/build/run.js:71:3)
+    at runAndTransformResultsToJestFormat (/Users/tombeck/Development/tools/automation-builder/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:122:21)
+    at jestAdapter (/Users/tombeck/Development/tools/automation-builder/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:79:19)
+    at runTestInternal (/Users/tombeck/Development/tools/automation-builder/node_modules/jest-runner/build/runTest.js:367:16)
+    at runTest (/Users/tombeck/Development/tools/automation-builder/node_modules/jest-runner/build/runTest.js:444:34)
+    at Object.worker (/Users/tombeck/Development/tools/automation-builder/node_modules/jest-runner/build/testWorker.js:106:12)</failure>
+    </testcase>
+    <testcase classname="tests/aws/rate-limiter.test.js" name="should block after max attempts" time="0.019">
+      <failure>Error: expect(received).rejects.toThrow(expected)
+
+Expected substring: &quot;Rate limit exceeded&quot;
+Received message:   &quot;Missing region in config&quot;
+
+      53 |     };
+      54 |     
+    &gt; 55 |     const result = await dynamoDB.query(params).promise();
+         |                                                 ^
+      56 |     const lockoutRecord = await getLockoutStatus(identifier);
+      57 |     
+      58 |     return {
+
+      at Request.VALIDATE_REGION (node_modules/aws-sdk/lib/event_listeners.js:128:47)
+      at Request.callListeners (node_modules/aws-sdk/lib/sequential_executor.js:106:20)
+      at callNextListener (node_modules/aws-sdk/lib/sequential_executor.js:96:12)
+      at node_modules/aws-sdk/lib/event_listeners.js:120:11
+      at finish (node_modules/aws-sdk/lib/config.js:396:7)
+      at node_modules/aws-sdk/lib/config.js:414:9
+      at EnvironmentCredentials.get (node_modules/aws-sdk/lib/credentials.js:127:7)
+      at getAsyncCredentials (node_modules/aws-sdk/lib/config.js:408:24)
+      at Config.getCredentials (node_modules/aws-sdk/lib/config.js:428:9)
+      at Request.VALIDATE_CREDENTIALS (node_modules/aws-sdk/lib/event_listeners.js:111:28)
+      at Request.callListeners (node_modules/aws-sdk/lib/sequential_executor.js:102:18)
+      at Request.emit (node_modules/aws-sdk/lib/sequential_executor.js:78:10)
+      at Request.emit (node_modules/aws-sdk/lib/request.js:686:14)
+      at Request.transition (node_modules/aws-sdk/lib/request.js:22:10)
+      at AcceptorStateMachine.runTo (node_modules/aws-sdk/lib/state_machine.js:14:12)
+      at Request.runTo (node_modules/aws-sdk/lib/request.js:406:15)
+      at node_modules/aws-sdk/lib/request.js:795:12
+      at Request.promise (node_modules/aws-sdk/lib/request.js:781:12)
+      at promise (terraform/aws/lambda/rate-limiter/index.js:55:49)
+      at checkRateLimit (terraform/aws/lambda/rate-limiter/index.js:18:9)
+      at Object.handler (tests/aws/rate-limiter.test.js:74:22)
+    at Object.toThrow (/Users/tombeck/Development/tools/automation-builder/node_modules/expect/build/index.js:218:22)
+    at Object.toThrow (/Users/tombeck/Development/tools/automation-builder/tests/aws/rate-limiter.test.js:74:46)
+    at Promise.then.completed (/Users/tombeck/Development/tools/automation-builder/node_modules/jest-circus/build/utils.js:298:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (/Users/tombeck/Development/tools/automation-builder/node_modules/jest-circus/build/utils.js:231:10)
+    at _callCircusTest (/Users/tombeck/Development/tools/automation-builder/node_modules/jest-circus/build/run.js:316:40)
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at _runTest (/Users/tombeck/Development/tools/automation-builder/node_modules/jest-circus/build/run.js:252:3)
+    at _runTestsForDescribeBlock (/Users/tombeck/Development/tools/automation-builder/node_modules/jest-circus/build/run.js:126:9)
+    at _runTestsForDescribeBlock (/Users/tombeck/Development/tools/automation-builder/node_modules/jest-circus/build/run.js:121:9)
+    at run (/Users/tombeck/Development/tools/automation-builder/node_modules/jest-circus/build/run.js:71:3)
+    at runAndTransformResultsToJestFormat (/Users/tombeck/Development/tools/automation-builder/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:122:21)
+    at jestAdapter (/Users/tombeck/Development/tools/automation-builder/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:79:19)
+    at runTestInternal (/Users/tombeck/Development/tools/automation-builder/node_modules/jest-runner/build/runTest.js:367:16)
+    at runTest (/Users/tombeck/Development/tools/automation-builder/node_modules/jest-runner/build/runTest.js:444:34)
+    at Object.worker (/Users/tombeck/Development/tools/automation-builder/node_modules/jest-runner/build/testWorker.js:106:12)</failure>
+    </testcase>
+    <testcase classname="tests/aws/rate-limiter.test.js" name="should reset after window expires" time="0.001">
+      <failure>ConfigError: Missing region in config
+    at Request.VALIDATE_REGION (/Users/tombeck/Development/tools/automation-builder/node_modules/aws-sdk/lib/event_listeners.js:128:47)
+    at Request.callListeners (/Users/tombeck/Development/tools/automation-builder/node_modules/aws-sdk/lib/sequential_executor.js:106:20)
+    at callNextListener (/Users/tombeck/Development/tools/automation-builder/node_modules/aws-sdk/lib/sequential_executor.js:96:12)
+    at /Users/tombeck/Development/tools/automation-builder/node_modules/aws-sdk/lib/event_listeners.js:120:11
+    at finish (/Users/tombeck/Development/tools/automation-builder/node_modules/aws-sdk/lib/config.js:396:7)
+    at /Users/tombeck/Development/tools/automation-builder/node_modules/aws-sdk/lib/config.js:414:9
+    at EnvironmentCredentials.get (/Users/tombeck/Development/tools/automation-builder/node_modules/aws-sdk/lib/credentials.js:127:7)
+    at getAsyncCredentials (/Users/tombeck/Development/tools/automation-builder/node_modules/aws-sdk/lib/config.js:408:24)
+    at Config.getCredentials (/Users/tombeck/Development/tools/automation-builder/node_modules/aws-sdk/lib/config.js:428:9)
+    at Request.VALIDATE_CREDENTIALS (/Users/tombeck/Development/tools/automation-builder/node_modules/aws-sdk/lib/event_listeners.js:111:28)
+    at Request.callListeners (/Users/tombeck/Development/tools/automation-builder/node_modules/aws-sdk/lib/sequential_executor.js:102:18)
+    at Request.emit (/Users/tombeck/Development/tools/automation-builder/node_modules/aws-sdk/lib/sequential_executor.js:78:10)
+    at Request.emit (/Users/tombeck/Development/tools/automation-builder/node_modules/aws-sdk/lib/request.js:686:14)
+    at Request.transition (/Users/tombeck/Development/tools/automation-builder/node_modules/aws-sdk/lib/request.js:22:10)
+    at AcceptorStateMachine.runTo (/Users/tombeck/Development/tools/automation-builder/node_modules/aws-sdk/lib/state_machine.js:14:12)
+    at Request.runTo (/Users/tombeck/Development/tools/automation-builder/node_modules/aws-sdk/lib/request.js:406:15)
+    at /Users/tombeck/Development/tools/automation-builder/node_modules/aws-sdk/lib/request.js:795:12
+    at new Promise (&lt;anonymous&gt;)
+    at Request.promise (/Users/tombeck/Development/tools/automation-builder/node_modules/aws-sdk/lib/request.js:781:12)
+    at promise (/Users/tombeck/Development/tools/automation-builder/terraform/aws/lambda/rate-limiter/index.js:55:49)
+    at checkRateLimit (/Users/tombeck/Development/tools/automation-builder/terraform/aws/lambda/rate-limiter/index.js:18:9)
+    at Object.handler (/Users/tombeck/Development/tools/automation-builder/tests/aws/rate-limiter.test.js:95:30)
+    at Promise.then.completed (/Users/tombeck/Development/tools/automation-builder/node_modules/jest-circus/build/utils.js:298:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (/Users/tombeck/Development/tools/automation-builder/node_modules/jest-circus/build/utils.js:231:10)
+    at _callCircusTest (/Users/tombeck/Development/tools/automation-builder/node_modules/jest-circus/build/run.js:316:40)
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at _runTest (/Users/tombeck/Development/tools/automation-builder/node_modules/jest-circus/build/run.js:252:3)
+    at _runTestsForDescribeBlock (/Users/tombeck/Development/tools/automation-builder/node_modules/jest-circus/build/run.js:126:9)
+    at _runTestsForDescribeBlock (/Users/tombeck/Development/tools/automation-builder/node_modules/jest-circus/build/run.js:121:9)
+    at run (/Users/tombeck/Development/tools/automation-builder/node_modules/jest-circus/build/run.js:71:3)
+    at runAndTransformResultsToJestFormat (/Users/tombeck/Development/tools/automation-builder/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:122:21)
+    at jestAdapter (/Users/tombeck/Development/tools/automation-builder/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:79:19)
+    at runTestInternal (/Users/tombeck/Development/tools/automation-builder/node_modules/jest-runner/build/runTest.js:367:16)
+    at runTest (/Users/tombeck/Development/tools/automation-builder/node_modules/jest-runner/build/runTest.js:444:34)
+    at Object.worker (/Users/tombeck/Development/tools/automation-builder/node_modules/jest-runner/build/testWorker.js:106:12)</failure>
+    </testcase>
+  </testsuite>
+</testsuites>

@@ -1,0 +1,177 @@
+{
+  "name": "Slack to S3 Image Migration",
+  "nodes": [
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "channel": "={{ $json.channelName }}",
+        "filters": {
+          "subtype": [
+            "file_share"
+          ],
+          "hasFiles": true
+        }
+      },
+      "name": "Slack Trigger",
+      "type": "n8n-nodes-base.slackTrigger",
+      "typeVersion": 1,
+      "position": [
+        250,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{ $json.files[0].mimetype.startsWith('image/') }}",
+              "value2": true
+            }
+          ]
+        }
+      },
+      "name": "Is Image?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        450,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.files[0].url_private }}",
+        "options": {
+          "headers": {
+            "Authorization": "Bearer={{ $node[\"Slack Trigger\"].auth.token }}"
+          }
+        }
+      },
+      "name": "HTTP Request",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        650,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "functionCode": "// Add timestamp to filename to prevent duplicates\nconst timestamp = Date.now();\nconst originalFilename = $input.all()[0].files[0].name;\nconst extension = originalFilename.split('.').pop();\nconst newFilename = `${originalFilename.split('.')[0]}_${timestamp}.${extension}`;\n\nreturn {\n  filename: newFilename,\n  data: $input.all()[1].data,\n  mimeType: $input.all()[0].files[0].mimetype\n};"
+      },
+      "name": "Prepare Upload",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [
+        850,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "bucket": "={{ $json.bucketName }}",
+        "fileName": "={{ $json.filename }}",
+        "data": "={{ $json.data }}",
+        "options": {
+          "contentType": "={{ $json.mimeType }}"
+        }
+      },
+      "name": "S3",
+      "type": "n8n-nodes-base.s3",
+      "typeVersion": 1,
+      "position": [
+        1050,
+        300
+      ],
+      "credentials": {
+        "s3": {
+          "id": "s3-credentials",
+          "name": "S3 Account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $node[\"Slack Trigger\"].json.channel }}",
+        "text": "=Image {{ $node[\"Slack Trigger\"].json.files[0].name }} has been successfully uploaded to S3 as {{ $node[\"Prepare Upload\"].json.filename }}",
+        "otherOptions": {
+          "thread_ts": "={{ $node[\"Slack Trigger\"].json.ts }}"
+        }
+      },
+      "name": "Slack",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2,
+      "position": [
+        1250,
+        300
+      ]
+    }
+  ],
+  "connections": {
+    "Slack Trigger": {
+      "main": [
+        [
+          {
+            "node": "Is Image?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is Image?": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Prepare Upload",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Upload": {
+      "main": [
+        [
+          {
+            "node": "S3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "S3": {
+      "main": [
+        [
+          {
+            "node": "Slack",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2024-01-27T17:22:32.000Z",
+  "versionId": "1"
+}
