@@ -43,8 +43,8 @@ x-init-ollama: &init-ollama
     - ollama_storage:/root/.ollama
   entrypoint: /bin/sh
   command:
-    - "-c"
-    - "sleep 3; OLLAMA_HOST=ollama:11434 ollama pull llama3.1; OLLAMA_HOST=ollama:11434 ollama pull nomic-embed-text"
+    - '-c'
+    - 'sleep 3; OLLAMA_HOST=ollama:11434 ollama pull llama3.1; OLLAMA_HOST=ollama:11434 ollama pull nomic-embed-text'
 
 services:
   flowise:
@@ -53,13 +53,13 @@ services:
     restart: unless-stopped
     container_name: flowise
     environment:
-        - PORT=3001
+      - PORT=3001
     ports:
-        - 3001:3001
+      - 3001:3001
     extra_hosts:
-      - "host.docker.internal:host-gateway"
+      - 'host.docker.internal:host-gateway'
     volumes:
-        - ~/.flowise:/root/.flowise
+      - ~/.flowise:/root/.flowise
     entrypoint: /bin/sh -c "sleep 3; flowise start"
 
   open-webui:
@@ -68,9 +68,9 @@ services:
     restart: unless-stopped
     container_name: open-webui
     ports:
-      - "3000:8080"
+      - '3000:8080'
     extra_hosts:
-      - "host.docker.internal:host-gateway"
+      - 'host.docker.internal:host-gateway'
     volumes:
       - open-webui:/app/backend/data
 
@@ -87,7 +87,11 @@ services:
     volumes:
       - postgres_storage:/var/lib/postgresql/data
     healthcheck:
-      test: ['CMD-SHELL', 'pg_isready -h localhost -U ${POSTGRES_USER} -d ${POSTGRES_DB}']
+      test:
+        [
+          'CMD-SHELL',
+          'pg_isready -h localhost -U ${POSTGRES_USER} -d ${POSTGRES_DB}'
+        ]
       interval: 5s
       timeout: 5s
       retries: 10
@@ -97,8 +101,8 @@ services:
     container_name: n8n-import
     entrypoint: /bin/sh
     command:
-      - "-c"
-      - "n8n import:credentials --separate --input=/backup/credentials && n8n import:workflow --separate --input=/backup/workflows"
+      - '-c'
+      - 'n8n import:credentials --separate --input=/backup/credentials && n8n import:workflow --separate --input=/backup/workflows'
     volumes:
       - ./n8n/backup:/backup
     depends_on:
@@ -132,11 +136,11 @@ services:
       - qdrant_storage:/qdrant/storage
 
   ollama-cpu:
-    profiles: ["cpu"]
+    profiles: ['cpu']
     <<: *service-ollama
 
   ollama-gpu:
-    profiles: ["gpu-nvidia"]
+    profiles: ['gpu-nvidia']
     <<: *service-ollama
     deploy:
       resources:
@@ -147,13 +151,13 @@ services:
               capabilities: [gpu]
 
   ollama-pull-llama-cpu:
-    profiles: ["cpu"]
+    profiles: ['cpu']
     <<: *init-ollama
     depends_on:
       - ollama-cpu
 
   ollama-pull-llama-gpu:
-    profiles: ["gpu-nvidia"]
+    profiles: ['gpu-nvidia']
     <<: *init-ollama
     depends_on:
       - ollama-gpu

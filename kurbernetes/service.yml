@@ -1,0 +1,16 @@
+# service.yaml
+apiVersion: "v1"
+kind: "Service"
+metadata:
+  name: "flowise-service"
+  namespace: "default"
+  labels:
+    app: "flowise"
+spec:
+  ports:
+  - protocol: "TCP"
+    port: 80
+    targetPort: 3000
+  selector:
+    app: "flowise"
+  type: "LoadBalancer"

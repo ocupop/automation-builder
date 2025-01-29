@@ -1,0 +1,38 @@
+# deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: flowise
+  labels:
+    app: flowise
+spec:
+  selector:
+    matchLabels:
+      app: flowise
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: flowise
+    spec:
+      containers:
+      - name: flowise
+        image: gcr.io/[ProjectID]/flowise:dev
+        imagePullPolicy: Always
+        env:
+        - name: FLOWISE_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: flowise-secrets
+              key: username
+        - name: FLOWISE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: flowise-secrets
+              key: password
+        - name: FLOWISE_AUTH_ENABLED
+          value: "true"
+        resources: 
+          requests:
+            cpu: "1"
+            memory: "1Gi"
