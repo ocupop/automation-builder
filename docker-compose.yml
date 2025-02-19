@@ -1,34 +1,26 @@
 volumes:
   n8n_storage:
-  postgres_storage:
   ollama_storage:
   qdrant_storage:
   open-webui:
   flowise:
 
-networks:
-  demo:
-
 x-n8n: &service-n8n
   image: n8nio/n8n:latest
-  networks: ['demo']
   environment:
     - DB_TYPE=postgresdb
-    - DB_POSTGRESDB_HOST=postgres
-    - DB_POSTGRESDB_USER=${POSTGRES_USER}
+    - DB_POSTGRESDB_HOST=db
+    - DB_POSTGRESDB_USER=postgres
     - DB_POSTGRESDB_PASSWORD=${POSTGRES_PASSWORD}
+    - DB_POSTGRESDB_DATABASE=postgres
     - N8N_DIAGNOSTICS_ENABLED=false
     - N8N_PERSONALIZATION_ENABLED=false
-    - N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS=true
     - N8N_ENCRYPTION_KEY
     - N8N_USER_MANAGEMENT_JWT_SECRET
-  links:
-    - postgres
 
 x-ollama: &service-ollama
   image: ollama/ollama:latest
   container_name: ollama
-  networks: ['demo']
   restart: unless-stopped
   ports:
     - 11434:11434
@@ -37,19 +29,17 @@ x-ollama: &service-ollama
 
 x-init-ollama: &init-ollama
   image: ollama/ollama:latest
-  networks: ['demo']
   container_name: ollama-pull-llama
   volumes:
     - ollama_storage:/root/.ollama
   entrypoint: /bin/sh
   command:
     - "-c"
-    - "sleep 3; OLLAMA_HOST=ollama:11434 ollama pull llama3.1; OLLAMA_HOST=ollama:11434 ollama pull nomic-embed-text"
+    - "sleep 3; OLLAMA_HOST=ollama:11434 ollama pull qwen2.5:7b-instruct-q4_K_M; OLLAMA_HOST=ollama:11434 ollama pull nomic-embed-text"
 
 services:
   flowise:
     image: flowiseai/flowise
-    networks: ['demo']
     restart: unless-stopped
     container_name: flowise
     environment:
@@ -64,7 +54,6 @@ services:
 
   open-webui:
     image: ghcr.io/open-webui/open-webui:main
-    networks: ['demo']
     restart: unless-stopped
     container_name: open-webui
     ports:
@@ -73,24 +62,6 @@ services:
       - "host.docker.internal:host-gateway"
     volumes:
       - open-webui:/app/backend/data
-
-  postgres:
-    image: postgres:16-alpine
-    networks: ['demo']
-    restart: unless-stopped
-    ports:
-      - 5432:5432
-    environment:
-      - POSTGRES_USER
-      - POSTGRES_PASSWORD
-      - POSTGRES_DB
-    volumes:
-      - postgres_storage:/var/lib/postgresql/data
-    healthcheck:
-      test: ['CMD-SHELL', 'pg_isready -h localhost -U ${POSTGRES_USER} -d ${POSTGRES_DB}']
-      interval: 5s
-      timeout: 5s
-      retries: 10
 
   n8n-import:
     <<: *service-n8n
@@ -101,9 +72,6 @@ services:
       - "n8n import:credentials --separate --input=/backup/credentials && n8n import:workflow --separate --input=/backup/workflows"
     volumes:
       - ./n8n/backup:/backup
-    depends_on:
-      postgres:
-        condition: service_healthy
 
   n8n:
     <<: *service-n8n
@@ -116,15 +84,12 @@ services:
       - ./n8n/backup:/backup
       - ./shared:/data/shared
     depends_on:
-      postgres:
-        condition: service_healthy
       n8n-import:
         condition: service_completed_successfully
 
   qdrant:
     image: qdrant/qdrant
     container_name: qdrant
-    networks: ['demo']
     restart: unless-stopped
     ports:
       - 6333:6333
@@ -146,6 +111,14 @@ services:
               count: 1
               capabilities: [gpu]
 
+  ollama-gpu-amd:
+    profiles: ["gpu-amd"]
+    <<: *service-ollama
+    image: ollama/ollama:rocm
+    devices:
+      - "/dev/kfd"
+      - "/dev/dri"
+
   ollama-pull-llama-cpu:
     profiles: ["cpu"]
     <<: *init-ollama
@@ -157,3 +130,10 @@ services:
     <<: *init-ollama
     depends_on:
       - ollama-gpu
+
+  ollama-pull-llama-gpu-amd:
+    profiles: [gpu-amd]
+    <<: *init-ollama
+    image: ollama/ollama:rocm
+    depends_on:
+     - ollama-gpu-amd
