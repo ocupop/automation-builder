@@ -3,15 +3,16 @@
 start_services.py
 
 This script starts the Supabase stack first, waits for it to initialize, and then starts
-the local AI stack. Both stacks use the same Docker Compose project name ("localai")
+the local AI stack. Both stacks use the same Docker Compose project name ("automation-builder")
 so they appear together in Docker Desktop.
 """
 
-import os
-import subprocess
-import shutil
-import time
 import argparse
+import os
+import shutil
+import subprocess
+import time
+
 
 def run_command(cmd, cwd=None):
     """Run a shell command and print it."""
@@ -45,11 +46,11 @@ def prepare_supabase_env():
     shutil.copyfile(env_example_path, env_path)
 
 def stop_existing_containers():
-    """Stop and remove existing containers for our unified project ('localai')."""
-    print("Stopping and removing existing containers for the unified project 'localai'...")
+    """Stop and remove existing containers for our unified project ('automation-builder')."""
+    print("Stopping and removing existing containers for the unified project 'automation-builder'...")
     run_command([
         "docker", "compose",
-        "-p", "localai",
+        "-p", "automation-builder",
         "-f", "docker-compose.yml",
         "-f", "supabase/docker/docker-compose.yml",
         "down"
@@ -59,13 +60,13 @@ def start_supabase():
     """Start the Supabase services (using its compose file)."""
     print("Starting Supabase services...")
     run_command([
-        "docker", "compose", "-p", "localai", "-f", "supabase/docker/docker-compose.yml", "up", "-d"
+        "docker", "compose", "-p", "automation-builder", "-f", "supabase/docker/docker-compose.yml", "up", "-d"
     ])
 
 def start_local_ai(profile=None):
     """Start the local AI services (using its compose file)."""
     print("Starting local AI services...")
-    cmd = ["docker", "compose", "-p", "localai"]
+    cmd = ["docker", "compose", "-p", "automation-builder"]
     if profile and profile != "none":
         cmd.extend(["--profile", profile])
     cmd.extend(["-f", "docker-compose.yml", "up", "-d"])
@@ -80,14 +81,14 @@ def main():
     clone_supabase_repo()
     prepare_supabase_env()
     stop_existing_containers()
-    
+
     # Start Supabase first
     start_supabase()
-    
+
     # Give Supabase some time to initialize
     print("Waiting for Supabase to initialize...")
     time.sleep(10)
-    
+
     # Then start the local AI services
     start_local_ai(args.profile)
 
