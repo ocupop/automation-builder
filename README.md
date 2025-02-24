@@ -1,3 +1,16 @@
+# Ocupop Automation AI
+
+- Modules are in develop right now
+```
+# To Pull
+git pull --recurse-submodules
+
+# Once pulled pull the submodules
+git submodule update --init --recursive --progress
+```
+
+
+---
 # Self-hosted AI Package
 
 **Self-hosted AI Package** is an open, docker compose template that
