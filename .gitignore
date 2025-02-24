@@ -13,3 +13,9 @@ node_modules
 venv
 venv2
 *.db
+
+.env
+.env.test
+volumes/
+shared/
+supabase/

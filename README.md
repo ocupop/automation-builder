@@ -1,14 +1,17 @@
-# Self-hosted AI starter kit (by the n8n team)
+# Self-hosted AI Package
 
-**Self-hosted AI Starter Kit** is an open, docker compose template that
+**Self-hosted AI Package** is an open, docker compose template that
 quickly bootstraps a fully featured Local AI and Low Code development
-environment including Open WebUI for an interface to chat with your N8N agents.
+environment including Ollama for your local LLMs, Open WebUI for an interface to chat with your N8N agents, and Supabase for your database, vector store, and authentication.
 
-*This is Ocupop's version with a couple of improvements and the addition of Open WebUI and Flowise!*
+This is Cole's version with a couple of improvements and the addition of Supabase, Open WebUI, and Flowise!
+Postgres was also removed since Supabase runs Postgres under the hood.
+Also, the local RAG AI Agent workflow from the video will be automatically in your
+n8n instance if you use this setup instead of the base one provided by n8n!
 
-[Original Local AI Starter Kit](https://github.com/n8n-io/self-hosted-ai-starter-kit)
+[Original Local AI Starter Kit by the n8n team](https://github.com/n8n-io/self-hosted-ai-starter-kit)
 
-Download Cole's N8N + OpenWebUI integration [directly on the Open WebUI site.](https://openwebui.com/f/coleam/n8n_pipe/) (more instructions below)
+Download my N8N + OpenWebUI integration [directly on the Open WebUI site.](https://openwebui.com/f/coleam/n8n_pipe/) (more instructions below)
 
 ![n8n.io - Screenshot](https://raw.githubusercontent.com/n8n-io/self-hosted-ai-starter-kit/main/assets/n8n-demo.gif)
 
@@ -21,6 +24,9 @@ quickly get started with building self-hosted AI workflows.
 ✅ [**Self-hosted n8n**](https://n8n.io/) - Low-code platform with over 400
 integrations and advanced AI components
 
+✅ [**Supabase**](https://supabase.com/) - Open source database as a service -
+most widely used database for AI agents
+
 ✅ [**Ollama**](https://ollama.com/) - Cross-platform LLM platform to install
 and run the latest local LLMs
 
@@ -31,54 +37,114 @@ privately interact with your local models and N8N agents
 builder that pairs very well with n8n
 
 ✅ [**Qdrant**](https://qdrant.tech/) - Open-source, high performance vector
-store with an comprehensive API
+store with an comprehensive API. Even though you can use Supabase for RAG, this was
+kept unlike Postgres since it's faster than Supabase so sometimes is the better option.
 
-✅ [**PostgreSQL**](https://www.postgresql.org/) -  Workhorse of the Data
-Engineering world, handles large amounts of data safely.
+## Prerequisites
+
+Before you begin, make sure you have the following software installed:
+
+- [Python](https://www.python.org/downloads/) - Required to run the setup script
+- [Git/GitHub Desktop](https://desktop.github.com/) - For easy repository management
+- [Docker/Docker Desktop](https://www.docker.com/products/docker-desktop/) - Required to run all services
 
 ## Installation
 
+Clone the repository and navigate to the project directory:
+```bash
+git clone https://github.com/coleam00/local-ai-packaged.git
+cd local-ai-packaged
+```
+
+Before running the services, you need to set up your environment variables for Supabase following their [self-hosting guide](https://supabase.com/docs/guides/self-hosting/docker#securing-your-services).
+
+1. Make a copy of `.env.example` and rename it to `.env` in the root directory of the project
+2. Set the following required environment variables:
+   ```bash
+   ############
+   # N8N Configuration
+   ############
+   N8N_ENCRYPTION_KEY=
+   N8N_USER_MANAGEMENT_JWT_SECRET=
+
+   ############
+   # Supabase Secrets
+   ############
+   POSTGRES_PASSWORD=
+   JWT_SECRET=
+   ANON_KEY=
+   SERVICE_ROLE_KEY=
+   DASHBOARD_USERNAME=
+   DASHBOARD_PASSWORD=
+
+   ############
+   # Supavisor -- Database pooler
+   ############
+   POOLER_TENANT_ID=
+   ```
+
+   > [!IMPORTANT]
+   > Make sure to generate secure random values for all secrets. Never use the example values in production.
+
+
+---
+
+The project includes a `start_services.py` script that handles starting both the Supabase and local AI services. The script accepts a `--profile` flag to specify which GPU configuration to use.
+
 ### For Nvidia GPU users
 
-```
-git clone https://github.com/coleam00/ai-agents-masterclass.git
-cd ai-agents-masterclass/local-ai-packaged
-docker compose --profile gpu-nvidia up
+```bash
+python start_services.py --profile gpu-nvidia
 ```
 
 > [!NOTE]
 > If you have not used your Nvidia GPU with Docker before, please follow the
 > [Ollama Docker instructions](https://github.com/ollama/ollama/blob/main/docs/docker.md).
 
+### For AMD GPU users on Linux
+
+```bash
+python start_services.py --profile gpu-amd
+```
+
 ### For Mac / Apple Silicon users
 
-If you’re using a Mac with an M1 or newer processor, you can't expose your GPU
-to the Docker instance, unfortunately. There are two options in this case:
+If you're using a Mac with an M1 or newer processor, you can't expose your GPU to the Docker instance, unfortunately. There are two options in this case:
 
-1. Run the starter kit fully on CPU, like in the section "For everyone else"
-   below
-2. Run Ollama on your Mac for faster inference, and connect to that from the
-   n8n instance
+1. Run the starter kit fully on CPU:
+   ```bash
+   python start_services.py --profile cpu
+   ```
 
-If you want to run Ollama on your mac, check the
-[Ollama homepage](https://ollama.com/)
-for installation instructions, and run the starter kit as follows:
+2. Run Ollama on your Mac for faster inference, and connect to that from the n8n instance:
+   ```bash
+   python start_services.py --profile none
+   ```
 
+   If you want to run Ollama on your mac, check the [Ollama homepage](https://ollama.com/) for installation instructions.
+
+#### For Mac users running OLLAMA locally
+
+If you're running OLLAMA locally on your Mac (not in Docker), you need to modify the OLLAMA_HOST environment variable in the n8n service configuration. Update the x-n8n section in your Docker Compose file as follows:
+
+```yaml
+x-n8n: &service-n8n
+  # ... other configurations ...
+  environment:
+    # ... other environment variables ...
+    - OLLAMA_HOST=host.docker.internal:11434
 ```
-git clone https://github.com/coleam00/ai-agents-masterclass.git
-cd ai-agents-masterclass/local-ai-packaged
-docker compose up
-```
 
-After you followed the quick start set-up below, change the Ollama credentials
-by using `http://host.docker.internal:11434/` as the host.
+Additionally, after you see "Editor is now accessible via: http://localhost:5678/":
+
+1. Head to http://localhost:5678/home/credentials
+2. Click on "Local Ollama service"
+3. Change the base URL to "http://host.docker.internal:11434/"
 
 ### For everyone else
 
-```
-git clone https://github.com/coleam00/ai-agents-masterclass.git
-cd ai-agents-masterclass/local-ai-packaged
-docker compose --profile cpu up
+```bash
+python start_services.py --profile cpu
 ```
 
 ## ⚡️ Quick start and usage
@@ -97,7 +163,8 @@ to get started.
 
    Ollama URL: http://ollama:11434
 
-   Postgres: use DB, username, and password from .env. Host is postgres
+   Postgres (through Supabase): use DB, username, and password from .env. IMPORTANT: Host is 'db'
+   Since that is the name of the service running Supabase
 
    Qdrant URL: http://qdrant:6333 (API key can be whatever since this is running locally)
 
@@ -140,26 +207,43 @@ language model and Qdrant as your vector store.
 
 ## Upgrading
 
-### For Nvidia GPU users
+To update all containers to their latest versions (n8n, Open WebUI, etc.), run these commands:
 
-```
-docker compose --profile gpu-nvidia pull
-docker compose create && docker compose --profile gpu-nvidia up
+```bash
+# Stop all services
+docker compose -p localai -f docker-compose.yml -f supabase/docker/docker-compose.yml down
+
+# Pull latest versions of all containers
+docker compose -p localai -f docker-compose.yml -f supabase/docker/docker-compose.yml pull
+
+# Start services again with your desired profile
+python start_services.py --profile <your-profile>
 ```
 
-### For Mac / Apple Silicon users
+Replace `<your-profile>` with one of: `cpu`, `gpu-nvidia`, `gpu-amd`, or `none`.
 
-```
-docker compose pull
-docker compose create && docker compose up
-```
+Note: The `start_services.py` script itself does not update containers - it only restarts them or pulls them if you are downloading these containers for the first time. To get the latest versions, you must explicitly run the commands above.
 
-### For everyone else
+## Troubleshooting
 
-```
-docker compose --profile cpu pull
-docker compose create && docker compose --profile cpu up
-```
+Here are solutions to common issues you might encounter:
+
+### Supabase Issues
+
+- **Supabase Pooler Restarting**: If the supabase-pooler container keeps restarting itself, follow the instructions in [this GitHub issue](https://github.com/supabase/supabase/issues/30210#issuecomment-2456955578).
+
+- **Supabase Analytics Startup Failure**: If the supabase-analytics container fails to start after changing your Postgres password, delete the folder `supabase/docker/volumes/db/data`.
+
+- **If using Docker Desktop**: Go into the Docker settings and make sure "Expose daemon on tcp://localhost:2375 without TLS" is turned on
+
+### GPU Support Issues
+
+- **Windows GPU Support**: If you're having trouble running Ollama with GPU support on Windows with Docker Desktop:
+  1. Open Docker Desktop settings
+  2. Enable WSL 2 backend
+  3. See the [Docker GPU documentation](https://docs.docker.com/desktop/features/gpu/) for more details
+
+- **Linux GPU Support**: If you're having trouble running Ollama with GPU support on Linux, follow the [Ollama Docker instructions](https://github.com/ollama/ollama/blob/main/docs/docker.md).
 
 ## 👓 Recommended reading
 
@@ -196,7 +280,7 @@ your local n8n instance.
 
 - [Tax Code Assistant](https://n8n.io/workflows/2341-build-a-tax-code-assistant-with-qdrant-mistralai-and-openai/)
 - [Breakdown Documents into Study Notes with MistralAI and Qdrant](https://n8n.io/workflows/2339-breakdown-documents-into-study-notes-using-templating-mistralai-and-qdrant/)
-- [Financial Documents Assistant using Qdrant and](https://n8n.io/workflows/2335-build-a-financial-documents-assistant-using-qdrant-and-mistralai/) [Mistral.ai](http://mistral.ai/)
+- [Financial Documents Assistant using Qdrant and](https://n8n.io/workflows/2335-build-a-financial-documents-assistant-using-qdrant-and-mistralai/) [ Mistral.ai](http://mistral.ai/)
 - [Recipe Recommendations with Qdrant and Mistral](https://n8n.io/workflows/2333-recipe-recommendations-with-qdrant-and-mistral/)
 
 ## Tips & tricks
