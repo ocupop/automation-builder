@@ -1,3 +1,6 @@
 [submodule "lib/local-ai-packaged"]
 	path = lib/local-ai-packaged
 	url = git@github.com:coleam00/local-ai-packaged.git
+[submodule "lib/local"]
+	path = lib/local
+	url = git@github.com:coleam00/local-ai-packaged.git
