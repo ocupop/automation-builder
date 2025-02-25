@@ -51,6 +51,7 @@ def stop_existing_containers():
         "docker", "compose",
         "-p", "localai",
         "-f", "docker-compose.yml",
+        "-f", "lib/local-ai-packaged/docker-compose.yml",
         "-f", "supabase/docker/docker-compose.yml",
         "down"
     ])
@@ -63,8 +64,22 @@ def start_supabase():
     ])
 
 def start_local_ai(profile=None):
-    """Start the local AI services (using its compose file)."""
+    """Start the local AI services using the compose file in lib/local-ai-packaged."""
     print("Starting local AI services...")
+    local_ai_compose = os.path.join("lib", "local-ai-packaged", "docker-compose.yml")
+    if not os.path.exists(local_ai_compose):
+        raise FileNotFoundError(f"Local AI docker-compose file not found at: {local_ai_compose}")
+        
+    cmd = ["docker", "compose", "-p", "localai"]
+    if profile and profile != "none":
+        cmd.extend(["--profile", profile])
+    cmd.extend(["-f", local_ai_compose, "up", "-d"])
+    run_command(cmd)
+
+
+def start(profile=None):
+    """Start the base services using the root docker-compose.yml file."""
+    print("Starting base services...")
     cmd = ["docker", "compose", "-p", "localai"]
     if profile and profile != "none":
         cmd.extend(["--profile", profile])
@@ -90,6 +105,12 @@ def main():
     
     # Then start the local AI services
     start_local_ai(args.profile)
+    
+    print("Waiting for local ai to initialize...")
+    time.sleep(10)
+    
+    # Start base services
+    start(args.profile)
 
 if __name__ == "__main__":
     main()
