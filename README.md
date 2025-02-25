@@ -9,6 +9,16 @@ git pull --recurse-submodules
 git submodule update --init --recursive --progress
 ```
 
+**Quick Start**
+1. Run the starter kit fully on CPU:
+   ```bash
+   python start_services.py --profile cpu
+   ```
+
+2. Run Ollama on your Mac for faster inference, and connect to that from the n8n instance:
+   ```bash
+   python start_services.py --profile none
+   ```
 
 ---
 # Self-hosted AI Package
