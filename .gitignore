@@ -1,15 +1,8 @@
-__pycache__
-prep
+# Local AI Packaged
 .env
-.env.local
-chroma_db
-test.py
-data
-creds
-credentials
-credentials.json
-token.json
-node_modules
-venv
-venv2
-*.db
+.env.test
+volumes/
+shared/
+supabase/
+
+# Add additional files or directories to .gitignore
