@@ -44,6 +44,13 @@ def prepare_supabase_env():
     print("Copying .env in root to .env in supabase/docker...")
     shutil.copyfile(env_example_path, env_path)
 
+def prepare_local_ai_env():
+    """Copy .env to .env in lib/local-ai-packaged."""
+    env_path = os.path.join("lib", "local-ai-packaged", ".env")
+    env_example_path = os.path.join(".env")
+    print("Copying .env in root to .env in lib/local-ai-packaged...")
+    shutil.copyfile(env_example_path, env_path)
+
 def stop_existing_containers():
     """Stop and remove existing containers for our unified project ('localai')."""
     print("Stopping and removing existing containers for the unified project 'localai'...")
@@ -69,6 +76,9 @@ def start_local_ai(profile=None):
     local_ai_compose = os.path.join("lib", "local-ai-packaged", "docker-compose.yml")
     if not os.path.exists(local_ai_compose):
         raise FileNotFoundError(f"Local AI docker-compose file not found at: {local_ai_compose}")
+    
+    # Prepare the environment file
+    prepare_local_ai_env()
         
     cmd = ["docker", "compose", "-p", "localai"]
     if profile and profile != "none":
