@@ -4,3 +4,19 @@ services:
     image: docker/welcome-to-docker
     ports:
       - '8080:80'
+
+  flowise:
+    extends:
+      file: ./lib/local-ai-packaged/docker-compose.yml
+      service: flowise
+    environment:
+      - FLOWISE_USERNAME=${FLOWISE_USERNAME}
+      - FLOWISE_PASSWORD=${FLOWISE_PASSWORD}
+      - DEBUG=true
+      - DATABASE_PATH=/root/.flowise
+      - APIKEY_PATH=/root/.flowise
+      - SECRETKEY_PATH=/root/.flowise
+      - LOG_PATH=/root/.flowise/logs
+      - FLOWISE_SECRETKEY_OVERWRITE=${FLOWISE_SECRET_KEY}
+      - CORS_ORIGINS="*"
+      - FLOWISE_PREVENT_BOT=true
