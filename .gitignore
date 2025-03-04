@@ -6,3 +6,4 @@ shared/
 supabase/
 
 # Add additional files or directories to .gitignore
+.DS_Store
