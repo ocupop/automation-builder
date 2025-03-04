@@ -22,7 +22,6 @@ services:
       - FLOWISE_PREVENT_BOT=true
   crawl4ai:
     image: unclecode/crawl4ai:all
-    platform: linux/arm64/v8
     container_name: crawl4ai
     ports:
       - '11235:11235'
