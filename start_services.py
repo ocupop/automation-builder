@@ -104,23 +104,24 @@ def main():
 
     clone_supabase_repo()
     prepare_supabase_env()
+    prepare_local_ai_env()
     stop_existing_containers()
     
-    # Start Supabase first
-    start_supabase()
+    # Start all services together
+    print("Starting all services...")
+    cmd = ["docker", "compose", "-p", "localai"]
+    if args.profile and args.profile != "none":
+        cmd.extend(["--profile", args.profile])
+    cmd.extend([
+        "-f", "docker-compose.yml",
+        "-f", "lib/local-ai-packaged/docker-compose.yml",
+        "-f", "supabase/docker/docker-compose.yml",
+        "up", "-d"
+    ])
+    run_command(cmd)
     
-    # Give Supabase some time to initialize
-    print("Waiting for Supabase to initialize...")
-    time.sleep(10)
-    
-    # Then start the local AI services
-    start_local_ai(args.profile)
-    
-    print("Waiting for local ai to initialize...")
-    time.sleep(10)
-    
-    # Start base services
-    start(args.profile)
+    print("Waiting for services to initialize...")
+    time.sleep(20)  # Increased wait time since we're starting everything at once
 
 if __name__ == "__main__":
     main()
