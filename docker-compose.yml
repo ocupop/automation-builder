@@ -20,3 +20,21 @@ services:
       - FLOWISE_SECRETKEY_OVERWRITE=${FLOWISE_SECRET_KEY}
       - CORS_ORIGINS="*"
       - FLOWISE_PREVENT_BOT=true
+  crawl4ai:
+    image: unclecode/crawl4ai:all
+    ports:
+      - '11235:11235'
+    environment:
+      - CRAWL4AI_API_TOKEN=${CRAWL4AI_API_TOKEN} # Optional API security
+      - MAX_CONCURRENT_TASKS=5
+      # LLM Provider Keys
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      # - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY:-}
+    volumes:
+      - /dev/shm:/dev/shm
+    deploy:
+      resources:
+        limits:
+          memory: 4G
+        reservations:
+          memory: 1G
