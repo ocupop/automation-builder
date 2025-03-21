@@ -7,3 +7,19 @@ supabase/
 
 # Add additional files or directories to .gitignore
 .DS_Store
+Thumbs.db
+*.log
+*.tmp
+*.swp
+*.swo
+*.bak
+*.old
+*.orig
+*.rej
+*.sublime-project
+*.sublime-workspace
+.idea/
+.vscode/
+node_modules/
+dist/
+build/
