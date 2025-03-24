@@ -5,6 +5,9 @@ volumes/
 shared/
 supabase/
 
+# symlink
+searxng 
+
 # Add additional files or directories to .gitignore
 .DS_Store
 Thumbs.db
