@@ -36,6 +36,11 @@ git submodule update --init --recursive --progress
 
 3. Wait for all services to initialize (this may take a few minutes on first run)
 
+### Updating Services
+```
+docker compose -p localai -f docker-compose.yml -f supabase/docker/docker-compose.yml -f lib/local-ai-packaged/docker-compose.yml pull
+```
+
 ### Environment Configuration
 
 The platform uses various environment variables for configuration. A default `.env` file is provided, but you may need to customize it for your specific needs:
