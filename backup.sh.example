@@ -1,0 +1,29 @@
+#!/bin/bash
+
+# Exit immediately if a command fails
+set -e
+
+# Define paths
+EXPORTS_DIR="/root/ocu_backup"
+CONTAINER_EXPORT_PATH="/data/exports"
+WORKFLOWS_FILE="workflows.json"
+CREDENTIALS_FILE="credentials.json"
+
+# Export from n8n container to mounted volume
+echo "Exporting workflows and credentials from n8n container..."
+docker exec n8n n8n export:workflow --all --output="${CONTAINER_EXPORT_PATH}/${WORKFLOWS_FILE}"
+docker exec n8n n8n export:credentials --all --output="${CONTAINER_EXPORT_PATH}/${CREDENTIALS_FILE}"
+
+# Wait briefly to ensure file updates are visible to host
+sleep 2
+
+# Navigate to export directory
+cd "$EXPORTS_DIR"
+
+# Add and commit changes
+echo "Committing exports to Git..."
+git add .
+git commit -m "Backup: exported n8n workflows and credentials on $(date +'%Y-%m-%d %H:%M:%S')" || echo "No changes to commit."
+git push origin main
+
+echo "Backup and push complete."
