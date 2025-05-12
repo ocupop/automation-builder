@@ -25,11 +25,13 @@ git submodule update --init --recursive --progress
 ### Quick Start
 
 1. Run the starter kit fully on CPU (recommended for most systems):
+
    ```bash
    python start_services.py --profile cpu
    ```
 
 2. Run Ollama on your Mac for faster inference, and connect to that from the n8n instance:
+
    ```bash
    python start_services.py --profile none
    ```
@@ -37,6 +39,7 @@ git submodule update --init --recursive --progress
 3. Wait for all services to initialize (this may take a few minutes on first run)
 
 ### Updating Services
+
 ```
 docker compose -p localai -f docker-compose.yml -f supabase/docker/docker-compose.yml -f lib/local-ai-packaged/docker-compose.yml pull
 ```
@@ -57,18 +60,23 @@ The platform uses various environment variables for configuration. A default `.e
 The Automation AI platform integrates several key services:
 
 ### Supabase
+
 A PostgreSQL database with authentication and real-time capabilities, used for data storage and management.
 
 ### n8n
+
 Workflow automation tool running on port 5678, with webhook functionality for triggering workflows from external sources. Data is persisted in the `n8n_data` Docker volume.
 
 ### Flowise
+
 Low-code AI workflow builder that integrates with n8n for complex automation scenarios.
 
 ### SearXNG
+
 Privacy-focused metasearch engine that aggregates results from multiple search services.
 
 ### Local AI Services
+
 Self-hosted AI models for various tasks, configured through the profile settings.
 
 ## Contribution
@@ -103,6 +111,7 @@ docker compose -p automation_ai -f docker-compose.yml up -d
 ### Stopping Services
 
 To stop all services:
+
 ```bash
 docker compose -p automation_ai down
 ```
@@ -114,6 +123,7 @@ docker compose -p automation_ai down
 2. **Port Conflicts**: Ensure the required ports (5678 for n8n, etc.) are not already in use by other applications.
 
 3. **Submodule Issues**: If you encounter problems with submodules, try:
+
    ```bash
    git submodule update --init --recursive --force
    ```
